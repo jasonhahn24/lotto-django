@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card">
+    <h2>📊 관리자 대시보드</h2>
+    <br>
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 180px; background: #1a3a5c; color: white; padding: 1.5rem; border-radius: 12px; text-align: center;">
+            <p style="font-size: 2rem; font-weight: bold;">{{ total_tickets }}</p>
+            <p>총 판매 티켓</p>
+        </div>
+        <div style="flex: 1; min-width: 180px; background: #d4af37; color: #1a3a5c; padding: 1.5rem; border-radius: 12px; text-align: center;">
+            <p style="font-size: 2rem; font-weight: bold;">{{ total_revenue|floatformat:0 }}</p>
+            <p>총 수익 (원)</p>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>🎰 회차 목록</h2>
+    <br>
+    <table>
+        <thead>
+            <tr>
+                <th>회차</th>
+                <th>추첨일</th>
+                <th>상태</th>
+                <th>당첨번호</th>
+                <th>추첨</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for draw in draws %}
+            <tr>
+                <td>{{ draw.round_no }}회</td>
+                <td>{{ draw.draw_date }}</td>
+                <td>
+                    {% if draw.status == 'drawn' %}
+                        <span class="badge badge-gold">추첨완료</span>
+                    {% else %}
+                        <span class="badge badge-gray">대기중</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if draw.numbers %}
+                        {% for num in draw.numbers %}
+                            <span class="badge badge-gold">{{ num }}</span>
+                        {% endfor %}
+                        + <span class="badge" style="background:#d4af37; color:#1a3a5c;">{{ draw.bonus }}</span>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    {% if draw.status == 'pending' %}
+                        <form method="post" action="{% url 'lotto:admin_draw' draw.round_no %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-gold"
+                                style="padding: 0.3rem 0.8rem; font-size: 0.85rem;"
+                                onclick="return confirm('{{ draw.round_no }}회 추첨을 실행하시겠습니까?')">
+                                추첨하기
+                            </button>
+                        </form>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <h2>🏆 당첨 통계</h2>
+    <br>
+    {% if prize_stats %}
+    <table>
+        <thead>
+            <tr>
+                <th>등수</th>
+                <th>당첨자 수</th>
+                <th>지급 총액</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for stat in prize_stats %}
+            <tr>
+                <td><span class="badge badge-gold">{{ stat.prize_rank }}등</span></td>
+                <td>{{ stat.cnt }}명</td>
+                <td>{{ stat.total|default:0 }}원</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p style="color: #666; text-align: center; padding: 1rem;">아직 당첨 내역이 없습니다.</p>
+    {% endif %}
+</div>
+
+<div style="display: flex; gap: 1rem;">
+    <a href="{% url 'lotto:admin_sales' %}" class="btn btn-primary">📋 판매 내역 보기</a>
+    <a href="{% url 'lotto:admin_results' %}" class="btn btn-gold">🏆 당첨 내역 보기</a>
+</div>
+{% endblock %}

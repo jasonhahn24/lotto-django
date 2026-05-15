@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card" style="text-align: center;">
+    <h2>🎰 당첨 확인</h2>
+    <br>
+    <p style="color: #666;">{{ object.draw.round_no }}회 | {{ object.get_purchase_type_display }} 구매</p>
+    <br>
+
+    <div style="margin: 1rem 0;">
+        <p style="color: #666; margin-bottom: 0.5rem;">내 번호</p>
+        <div style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
+            {% for num in object.numbers %}
+                <span style="
+                    display: inline-flex; align-items: center; justify-content: center;
+                    width: 48px; height: 48px; border-radius: 50%;
+                    background: #1a3a5c; color: white;
+                    font-weight: bold; font-size: 1.1rem;">
+                    {{ num }}
+                </span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div style="margin: 1rem 0;">
+        <p style="color: #666; margin-bottom: 0.5rem;">당첨 번호</p>
+        <div style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; align-items: center;">
+            {% for num in object.draw.numbers %}
+                <span style="
+                    display: inline-flex; align-items: center; justify-content: center;
+                    width: 48px; height: 48px; border-radius: 50%;
+                    background: {% if num in object.numbers %}#2ecc71{% else %}#eee{% endif %};
+                    color: {% if num in object.numbers %}white{% else %}#333{% endif %};
+                    font-weight: bold; font-size: 1.1rem;">
+                    {{ num }}
+                </span>
+            {% endfor %}
+            <span style="color: #d4af37; margin: 0 0.3rem;">+</span>
+            <span style="
+                display: inline-flex; align-items: center; justify-content: center;
+                width: 48px; height: 48px; border-radius: 50%;
+                background: #d4af37; color: #1a3a5c;
+                font-weight: bold; font-size: 1.1rem;">
+                {{ object.draw.bonus }}
+            </span>
+        </div>
+    </div>
+
+    <br>
+    <div style="padding: 1.5rem; background: {% if rank == 0 %}#f8f9fa{% else %}#fff9e6{% endif %}; border-radius: 12px;">
+        <p style="font-size: 2rem;">{% if rank == 0 %}😢{% elif rank == 1 %}🎉{% else %}🎊{% endif %}</p>
+        <p style="font-size: 1.3rem; font-weight: bold; color: {% if rank == 0 %}#666{% else %}#d4af37{% endif %};">
+            {{ desc }}
+        </p>
+    </div>
+    <br>
+    <a href="{% url 'lotto:my_tickets' %}" class="btn btn-primary">← 내 티켓으로 돌아가기</a>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card">
+    <h2>🎰 Lucky Lotto에 오신 것을 환영합니다!</h2>
+    <br>
+    <p style="color: #666;">행운의 번호를 선택하고 당첨을 확인해보세요!</p>
+    <br>
+    <a href="{% url 'lotto:buy' %}" class="btn btn-gold">🎟️ 복권 구매하기</a>
+    <a href="{% url 'lotto:my_tickets' %}" class="btn btn-primary" style="margin-left: 0.5rem;">📋 내 티켓 보기</a>
+</div>
+
+{% if latest_draw %}
+<div class="card">
+    <h2>🏆 최근 당첨 번호 ({{ latest_draw.round_no }}회)</h2>
+    <br>
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+        {% for num in latest_draw.numbers %}
+            <span style="
+                display: inline-flex; align-items: center; justify-content: center;
+                width: 48px; height: 48px; border-radius: 50%;
+                background: #1a3a5c; color: white;
+                font-weight: bold; font-size: 1.1rem;">
+                {{ num }}
+            </span>
+        {% endfor %}
+        <span style="font-size: 1.2rem; color: #d4af37; margin: 0 0.3rem;">+</span>
+        <span style="
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 48px; height: 48px; border-radius: 50%;
+            background: #d4af37; color: #1a3a5c;
+            font-weight: bold; font-size: 1.1rem;">
+            {{ latest_draw.bonus }}
+        </span>
+        <span style="color: #666; font-size: 0.9rem; margin-left: 0.5rem;">보너스</span>
+    </div>
+    <br>
+    <p style="color: #666;">추첨일: {{ latest_draw.draw_date }}</p>
+</div>
+{% endif %}
+
+{% if pending_draw %}
+<div class="card" style="border-left: 4px solid #d4af37;">
+    <h2>🎟️ 현재 진행중인 회차</h2>
+    <br>
+    <p><strong>{{ pending_draw.round_no }}회</strong> | 추첨 예정일: {{ pending_draw.draw_date }}</p>
+    <br>
+    <a href="{% url 'lotto:buy' %}" class="btn btn-gold">지금 구매하기</a>
+</div>
+{% endif %}
+{% endblock %}

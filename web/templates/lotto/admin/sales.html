@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card">
+    <h2>📋 전체 판매 내역</h2>
+    <br>
+    <table>
+        <thead>
+            <tr>
+                <th>구매자</th>
+                <th>회차</th>
+                <th>번호</th>
+                <th>구매방식</th>
+                <th>결과</th>
+                <th>구매일시</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ticket in tickets %}
+            <tr>
+                <td>{{ ticket.user.username }}</td>
+                <td>{{ ticket.draw.round_no }}회</td>
+                <td>
+                    {% for num in ticket.numbers %}
+                        <span class="badge badge-gold">{{ num }}</span>
+                    {% endfor %}
+                </td>
+                <td>{{ ticket.get_purchase_type_display }}</td>
+                <td>
+                    {% if ticket.draw.status == 'drawn' %}
+                        {% if ticket.prize_rank == 0 %}
+                            <span class="badge badge-gray">낙첨</span>
+                        {% else %}
+                            <span class="badge badge-gold">{{ ticket.get_prize_rank_display }}</span>
+                        {% endif %}
+                    {% else %}
+                        <span class="badge badge-gray">대기중</span>
+                    {% endif %}
+                </td>
+                <td style="font-size: 0.85rem; color: #666;">{{ ticket.created_at|date:"Y-m-d H:i" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if is_paginated %}
+    <div style="display: flex; gap: 0.5rem; margin-top: 1rem; justify-content: center;">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-primary">이전</a>
+        {% endif %}
+        <span style="padding: 0.6rem 1rem;">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-primary">다음</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+<a href="{% url 'lotto:admin_dashboard' %}" class="btn btn-primary">← 대시보드로</a>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card">
+    <h2>🎟️ 복권 구매</h2>
+    <br>
+    {% if pending_draw %}
+        <p style="color: #666;">{{ pending_draw.round_no }}회 | 추첨 예정일: {{ pending_draw.draw_date }}</p>
+        <br>
+        <form method="post">
+            {% csrf_token %}
+            <label>구매 방식</label>
+            <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                <label style="font-weight: normal; display: flex; align-items: center; gap: 0.3rem;">
+                    <input type="radio" name="purchase_type" value="auto" checked> 🎲 자동 선택
+                </label>
+                <label style="font-weight: normal; display: flex; align-items: center; gap: 0.3rem;">
+                    <input type="radio" name="purchase_type" value="manual"> ✏️ 수동 선택
+                </label>
+            </div>
+
+            <div id="manual-inputs" style="display: none;">
+                <label>번호 직접 입력 (1~45, 6개)</label>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    {% for i in "123456" %}
+                        <input type="number" name="num{{ i }}" min="1" max="45"
+                               style="width: 70px; text-align: center;"
+                               placeholder="{{ i }}번">
+                    {% endfor %}
+                </div>
+                <br>
+            </div>
+
+            <button type="submit" class="btn btn-gold" style="width: 100%;">
+                🎰 구매하기 (1,000원)
+            </button>
+        </form>
+    {% else %}
+        <p style="color: #e74c3c;">⚠️ 현재 구매 가능한 회차가 없습니다.</p>
+    {% endif %}
+</div>
+
+<script>
+    const radios = document.querySelectorAll('input[name="purchase_type"]');
+    const manualDiv = document.getElementById('manual-inputs');
+    radios.forEach(r => r.addEventListener('change', () => {
+        manualDiv.style.display = r.value === 'manual' && r.checked ? 'block' : 'none';
+        if (r.value === 'auto' && r.checked) manualDiv.style.display = 'none';
+    }));
+</script>
+{% endblock %}

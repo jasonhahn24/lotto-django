@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card">
+    <h2>🏆 당첨 내역</h2>
+    <br>
+    {% for draw in draws %}
+    <div style="margin-bottom: 1.5rem; padding: 1.5rem; background: #f8f9fa; border-radius: 12px;">
+        <h3 style="color: #1a3a5c; margin-bottom: 1rem;">{{ draw.round_no }}회 | {{ draw.draw_date }}</h3>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; margin-bottom: 1rem;">
+            {% for num in draw.numbers %}
+                <span style="
+                    display: inline-flex; align-items: center; justify-content: center;
+                    width: 40px; height: 40px; border-radius: 50%;
+                    background: #1a3a5c; color: white; font-weight: bold;">
+                    {{ num }}
+                </span>
+            {% endfor %}
+            <span style="color: #d4af37;">+</span>
+            <span style="
+                display: inline-flex; align-items: center; justify-content: center;
+                width: 40px; height: 40px; border-radius: 50%;
+                background: #d4af37; color: #1a3a5c; font-weight: bold;">
+                {{ draw.bonus }}
+            </span>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>등수</th>
+                    <th>당첨자</th>
+                    <th>번호</th>
+                    <th>지급액</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ticket in draw.tickets.all %}
+                    {% if ticket.prize_rank != 0 %}
+                    <tr>
+                        <td><span class="badge badge-gold">{{ ticket.get_prize_rank_display }}</span></td>
+                        <td>{{ ticket.user.username }}</td>
+                        <td>
+                            {% for num in ticket.numbers %}
+                                <span class="badge badge-gold">{{ num }}</span>
+                            {% endfor %}
+                        </td>
+                        <td>{{ ticket.prize_amount }}원</td>
+                    </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% empty %}
+        <p style="color: #666; text-align: center; padding: 2rem;">아직 추첨된 회차가 없습니다.</p>
+    {% endfor %}
+</div>
+<a href="{% url 'lotto:admin_dashboard' %}" class="btn btn-primary">← 대시보드로</a>
+{% endblock %}

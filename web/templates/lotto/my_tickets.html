@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card">
+    <h2>📋 내 티켓 목록</h2>
+    <br>
+    {% if tickets %}
+    <table>
+        <thead>
+            <tr>
+                <th>회차</th>
+                <th>번호</th>
+                <th>구매방식</th>
+                <th>결과</th>
+                <th>확인</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ticket in tickets %}
+            <tr>
+                <td>{{ ticket.draw.round_no }}회</td>
+                <td>
+                    {% for num in ticket.numbers %}
+                        <span class="badge badge-gold">{{ num }}</span>
+                    {% endfor %}
+                </td>
+                <td>{{ ticket.get_purchase_type_display }}</td>
+                <td>
+                    {% if ticket.draw.status == 'drawn' %}
+                        {% if ticket.prize_rank == 0 %}
+                            <span class="badge badge-gray">낙첨</span>
+                        {% else %}
+                            <span class="badge badge-gold">{{ ticket.get_prize_rank_display }}</span>
+                        {% endif %}
+                    {% else %}
+                        <span class="badge badge-gray">추첨 대기</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if ticket.draw.status == 'drawn' %}
+                        <a href="{% url 'lotto:check' ticket.id %}" class="btn btn-primary" style="padding: 0.3rem 0.8rem; font-size: 0.85rem;">확인</a>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p style="color: #666; text-align: center; padding: 2rem;">구매한 티켓이 없습니다. <a href="{% url 'lotto:buy' %}">지금 구매하기</a></p>
+    {% endif %}
+</div>
+{% endblock %}
