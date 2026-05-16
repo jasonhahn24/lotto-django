@@ -7,7 +7,7 @@
     {% if pending_draw %}
         <p style="color: #666;">{{ pending_draw.round_no }}회 | 추첨 예정일: {{ pending_draw.draw_date }}</p>
         <br>
-        <form method="post">
+        <form method="post" id="buyForm">
             {% csrf_token %}
             <label>구매 방식</label>
             <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
@@ -28,6 +28,7 @@
                                placeholder="{{ i }}번">
                     {% endfor %}
                 </div>
+                <p id="error-msg" style="color: #e74c3c; margin-top: 0.5rem; display: none;"></p>
                 <br>
             </div>
 
@@ -43,9 +44,49 @@
 <script>
     const radios = document.querySelectorAll('input[name="purchase_type"]');
     const manualDiv = document.getElementById('manual-inputs');
+    const errorMsg = document.getElementById('error-msg');
+    const form = document.getElementById('buyForm');
+
     radios.forEach(r => r.addEventListener('change', () => {
         manualDiv.style.display = r.value === 'manual' && r.checked ? 'block' : 'none';
         if (r.value === 'auto' && r.checked) manualDiv.style.display = 'none';
     }));
+
+    form.addEventListener('submit', function(e) {
+        const type = document.querySelector('input[name="purchase_type"]:checked').value;
+        if (type !== 'manual') return;
+
+        const nums = [];
+        for (let i = 1; i <= 6; i++) {
+            const val = parseInt(document.querySelector(`input[name="num${i}"]`).value);
+            nums.push(val);
+        }
+
+        // 빈 값 체크
+        if (nums.some(isNaN)) {
+            e.preventDefault();
+            errorMsg.textContent = '⚠️ 6개 번호를 모두 입력해주세요.';
+            errorMsg.style.display = 'block';
+            return;
+        }
+
+        // 범위 체크
+        if (nums.some(n => n < 1 || n > 45)) {
+            e.preventDefault();
+            errorMsg.textContent = '⚠️ 번호는 1~45 사이여야 합니다.';
+            errorMsg.style.display = 'block';
+            return;
+        }
+
+        // 중복 체크
+        if (new Set(nums).size !== 6) {
+            e.preventDefault();
+            errorMsg.textContent = '⚠️ 중복된 번호가 있습니다. 서로 다른 6개 번호를 입력해주세요.';
+            errorMsg.style.display = 'block';
+            return;
+        }
+
+        errorMsg.style.display = 'none';
+    });
 </script>
 {% endblock %}
