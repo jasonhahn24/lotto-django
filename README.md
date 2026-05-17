@@ -88,6 +88,7 @@ docker-compose exec web python manage.py test apps.lotto --verbosity=2
 ---
 
 ## 📁 프로젝트 구조
+```
 lotto-django/
 ├── docker-compose.yml
 ├── .env
@@ -95,17 +96,18 @@ lotto-django/
 │   ├── Dockerfile
 │   └── nginx.conf
 └── web/
-├── Dockerfile
-├── requirements.txt
-├── manage.py
-├── config/
-│   ├── settings/
-│   ├── urls.py
-│   └── wsgi.py
-├── apps/
-│   ├── accounts/
-│   └── lotto/
-└── templates/
+    ├── Dockerfile
+    ├── requirements.txt
+    ├── manage.py
+    ├── config/
+    │   ├── settings/
+    │   ├── urls.py
+    │   └── wsgi.py
+    ├── apps/
+    │   ├── accounts/
+    │   └── lotto/
+    └── templates/
+```
 
 
 
