@@ -6,12 +6,13 @@ Django 웹 프레임워크와 Docker 멀티 컨테이너 환경을 활용하여 
 
 ## 🛠️ 기술 스택
 
-구분 : 기술 
-Backend : Django 5.0, Gunicorn
-Database : PostgreSQL 16
-Cache : Redis 7 
-Web Server : Nginx 1.25 
-Container : Docker, Docker Compose 
+| 구분 | 기술 |
+|---|---|
+| Backend | Django 5.0, Gunicorn |
+| Database | PostgreSQL 16 |
+| Cache | Redis 7 |
+| Web Server | Nginx 1.25 |
+| Container | Docker, Docker Compose |
 
 ---
 
